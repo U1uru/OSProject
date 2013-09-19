@@ -1,4 +1,4 @@
-AlanBBOS2013
+DoorOS Y
 ============
 
 This is my Fall 2013 Operating Systems class initial project.
