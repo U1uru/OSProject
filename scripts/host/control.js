@@ -30,6 +30,9 @@ function hostInit()
 	// Get a global reference to the drawing context.
 	_DrawingContext = _Canvas.getContext('2d');
 
+       // Get global reference to user program input area.
+       _UserInput = document.getElementById('taProgramInput');
+
 	// Enable the added-in canvas text functions (see canvastext.js for provenance and details).
 	CanvasTextFunctions.enable(_DrawingContext);   // TODO: Text functionality is now built in to the HTML5 canvas. Consider using that instead.
 

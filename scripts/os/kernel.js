@@ -191,5 +191,14 @@ function krnTrapError(msg)
 {
     hostLog("OS ERROR - TRAP: " + msg);
     // TODO: Display error on console, perhaps in some sort of colored screen. (Perhaps blue?)
+    _StdOut.init();
+    _DrawingContext.rect(0, 0, _Canvas.width, _Canvas.height);
+    _DrawingContext.fillStyle="blue";
+    _DrawingContext.fill();
+    _DrawingContext.fillStyle="green";
+    _DrawingContext.font="30px times";
+    _DrawingContext.fillText(msg,10,_Canvas.height/2);
+    shellStatus(["your sh*t is wrecked"]);
     krnShutdown();
+    clearInterval(_hardwareClockID);
 }

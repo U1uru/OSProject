@@ -104,8 +104,22 @@ function shellInit() {
     // status <string>
     sc = new ShellCommand();
     sc.command = "status";
-    sc.description = "<string> - sets the status.";
+    sc.description = "<string> - Sets the status.";
     sc.function = shellStatus;
+    this.commandList[this.commandList.length] = sc;
+
+    // bluescreen
+    sc = new ShellCommand();
+    sc.command = "bluescreen";
+    sc.description = "- Tests the system's blue screen function.";
+    sc.function = shellBlueScreen;
+    this.commandList[this.commandList.length] = sc;
+
+    // load
+    sc = new ShellCommand();
+    sc.command = "load";
+    sc.description = "- Loads user program into memory.";
+    sc.function = shellLoad;
     this.commandList[this.commandList.length] = sc;
 
     // processes - list the running processes and their IDs
@@ -420,4 +434,17 @@ function shellStatus(args)
     {
         _StdIn.putText("Usage: prompt <string>  Please supply a string.");
     }
+}
+
+function shellBlueScreen(args)
+{
+    krnTrapError("This is a test of the blue screen function");
+}
+
+function shellLoad(args)
+{
+    var input = _UserInput.value;
+    var re = /^(?:[0-9]|[A-F]|[a-f]|\s)*$/;
+    if(!re.test(input))
+        _StdOut.putText("Invalid command");
 }
