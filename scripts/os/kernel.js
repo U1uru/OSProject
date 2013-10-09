@@ -198,7 +198,7 @@ function krnTrapError(msg)
     _DrawingContext.fillStyle="green";
     _DrawingContext.font="30px times";
     _DrawingContext.fillText(msg,10,_Canvas.height/2);
-    shellStatus(["your sh*t is wrecked"]);
+    shellStatus(["I anything can't do right since because pickles."]);
     krnShutdown();
     clearInterval(_hardwareClockID);
 }
