@@ -443,8 +443,7 @@ function shellBlueScreen(args)
 
 function shellLoad(args)
 {
-    var input = _UserInput.value;
-    var re = /^(?:[0-9]|[A-F]|[a-f]|\s)*$/;
-    if(!re.test(input))
-        _StdOut.putText("Invalid command");
+    var results = loadUserProgram();
+    if(results == -1)
+        _StdOut.putText("Invalid hex code");
 }
