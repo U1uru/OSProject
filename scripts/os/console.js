@@ -111,15 +111,13 @@ function CLIconsole() {
 
     this.advanceLine = function() {
        this.CurrentXPosition = 0;
-       if(this.CurrentYPosition >= _DefaultFontSize+(_DefaultFontSize + _FontHeightMargin)*25)
+       this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
+       if(this.CurrentYPosition >= _Canvas.height)
        {
            var imgData = _DrawingContext.getImageData(0,0,_Canvas.width,this.CurrentYPosition);
            _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
            _DrawingContext.putImageData(imgData,0,-(_DefaultFontSize + _FontHeightMargin));
-       }
-       else
-       {
-           this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
+           this.CurrentYPosition -= (_DefaultFontSize + _FontHeightMargin);
        }
     };
 }

@@ -13,13 +13,18 @@
    <script type="text/javascript" src="scripts/host/control.js"></script>
    <script type="text/javascript" src="scripts/host/devices.js"></script>
    <script type="text/javascript" src="scripts/host/cpu.js"></script>
+   <script type="text/javascript" src="scripts/host/memory.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="scripts/os/interrupt.js"></script>
-   <script type="text/javascript" src="scripts/os/canvastext.js"></script>	
+   <script type="text/javascript" src="scripts/os/canvastext.js"></script>
+   <script type="text/javascript" src="scripts/os/tables.js"></script>	
    <script type="text/javascript" src="scripts/os/console.js"></script>	
    <script type="text/javascript" src="scripts/os/deviceDriver.js"></script>
    <script type="text/javascript" src="scripts/os/deviceDriverKeyboard.js"></script>
+   <script type="text/javascript" src="scripts/os/loader.js"></script>
+   <script type="text/javascript" src="scripts/os/memManager.js"></script>
+   <script type="text/javascript" src="scripts/os/pcb.js"></script>
    <script type="text/javascript" src="scripts/os/queue.js"></script>
    <script type="text/javascript" src="scripts/os/shell.js"></script>
    <script type="text/javascript" src="scripts/os/kernel.js"></script>
@@ -97,6 +102,32 @@
                    id  ="taProgramInput"
                    rows="8"
                    cols="48"
+         ></textarea>
+      </label>
+   </div>
+   
+   <div id="memoryDisplay" style="margin-right:4px;">
+      <label>
+         Memory
+         <br>
+         <textarea name="memoryOutput"
+                   id  ="memoryOutput"
+                   rows="8"
+                   cols="24"
+                   readonly
+         ></textarea>
+      </label>
+   </div>
+   
+   <div id="cpuDisplay" style="margin-right:4px;">
+      <label>
+         CPU
+         <br>
+         <textarea name="cpuOutput"
+                   id  ="cpuOutput"
+                   rows="8"
+                   cols="24"
+                   readonly
          ></textarea>
       </label>
    </div>
