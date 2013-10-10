@@ -98,6 +98,7 @@ function krnOnCPUClockPulse()
     var date = new Date();
     _TskCtx.fillText(date.toString(),10,17);
     _TskCtx.fillText("Status: " + _Status,10,45);
+    tables();
 }
 
 

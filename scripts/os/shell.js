@@ -122,6 +122,13 @@ function shellInit() {
     sc.function = shellLoad;
     this.commandList[this.commandList.length] = sc;
 
+    // run <PID>
+    sc = new ShellCommand();
+    sc.command = "run";
+    sc.description = "<PID> - runs program with <PID>";
+    sc.function = shellRun;
+    this.commandList[this.commandList.length] = sc;
+
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
 
@@ -448,4 +455,9 @@ function shellLoad(args)
         _StdOut.putText("Invalid hex code");
     else
         _StdOut.putText("Program loaded with PID: " + results);
+}
+
+function shellRun(args)
+{
+    _StdOut.putText("Program running. You better go catch it.");
 }
