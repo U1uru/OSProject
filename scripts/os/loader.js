@@ -23,6 +23,10 @@ function loadUserProgram()
    var userProgramArray = input.split(/\s/);
    for(i = 0; i < userProgramArray.length; i++)
       _Memory[i] = userProgramArray[i].toUpperCase();
+   process.state = "ready";
+   _ProcessArray[process.pid] = process;
+
+   return process.pid;
 }
 
 function createProcess()

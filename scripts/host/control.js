@@ -95,6 +95,9 @@ function hostBtnStartOS_click(btn)
     // Create and initialize memory
     _Memory = new Memory();
 
+    //initialize array of processes in memory
+    _ProcessArray = new Array();
+
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);
     // .. and call the OS Kernel Bootstrap routine.

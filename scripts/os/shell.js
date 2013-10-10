@@ -446,4 +446,6 @@ function shellLoad(args)
     var results = loadUserProgram();
     if(results == -1)
         _StdOut.putText("Invalid hex code");
+    else
+        _StdOut.putText("Program loaded with PID: " + results);
 }
