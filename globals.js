@@ -32,6 +32,8 @@ var _Memory = null;
 
 var _ProcessArray = null;
 
+var _RunningProcess = null;
+
 var _OSclock = 0;       // Page 23.
 
 var _Mode = 0;   // 0 = Kernel Mode, 1 = User Mode.  See page 21.

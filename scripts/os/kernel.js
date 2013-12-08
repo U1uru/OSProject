@@ -50,9 +50,9 @@ function krnBootstrap()      // Page 8.
    _OsShell.init();
 
    // Finally, initiate testing.
-   if (_GLaDOS) {
-      _GLaDOS.afterStartup();
-   }
+   //if (_GLaDOS) {
+      //_GLaDOS.afterStartup();
+   //}
 }
 
 function krnShutdown()

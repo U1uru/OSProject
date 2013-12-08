@@ -459,5 +459,14 @@ function shellLoad(args)
 
 function shellRun(args)
 {
-    _StdOut.putText("Program running. You better go catch it.");
+    //make sure pid is given and corresponds to a process
+    if(args.length > 0 && _ProcessArray[args[0]] != null)
+    {
+        _RunningProcess = _ProcessArray[args[0]];
+        _RunningProcess.state = "running";
+        _CPU.switch(_RunningProcess);
+        _CPU.isExecuting = true;
+    }
+    else
+        _StdOut.putText("PID invalid");
 }
