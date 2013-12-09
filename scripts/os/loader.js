@@ -12,17 +12,21 @@ function loadUserProgram()
    if(!re.test(input))
       return -1;
 
-   //need to check memory manager for available memory,
-   //but for now will just always load into the one memory slot.
-
+   //check memory manager for available memory
+   if(!_MemManager.isMemAvailable()){
+      return -1;
+   }
    var process = createProcess();
-   //clear memory
-   for(i = 0;i < _Memory.length;i++)
-      _Memory[i] = "00";
    //separate opcodes into array and enter into mem
    var userProgramArray = input.split(/\s/);
-   for(i = 0; i < userProgramArray.length; i++)
-      _Memory[i] = userProgramArray[i].toUpperCase();
+   for(i = 0; i < userProgramArray.length; i++){
+      if(process.base+i > process.limit){ // incase program too large
+         for(j = process.base+i-1;j >= process.base;j--)
+            _Memory[j] = "00";
+         return -2;
+      }
+      _Memory[i+process.base] = userProgramArray[i].toUpperCase();
+   }
    process.state = "ready";
    _ProcessArray[process.pid] = process;
 
@@ -33,13 +37,17 @@ function createProcess()
 {
    var state = "new";
    var pc = 0;
-   //to do: include scheduling information and
-   //memory management information once multiple 
-   //programs can be loaded.
+
+   var base, limit;
+   var nextSect = _MemManager.getNextSect();
+   if(nextSect >= 0){
+      base = nextSect*256;
+      limit = nextSect*256+255;
+   }
 
    var pid = _PID++;
 
-   var newProcess = new pcb(pid, state, pc);
+   var newProcess = new pcb(pid, state, pc, base, limit);
 
    return newProcess;
 }

@@ -9,7 +9,7 @@ function Memory()
 {
    var memArray = new Array(); // haha it's a pun
 
-   for(i = 0; i < 256; i++)
+   for(i = 0; i < 768; i++)
    {
       memArray[i] = "00";
    }

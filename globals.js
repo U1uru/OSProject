@@ -30,6 +30,10 @@ var _PID = 0;
 
 var _Memory = null;
 
+var _MEMORY_SIZE = 768;
+
+var _MemManager = null;
+
 var _ProcessArray = null;
 
 var _RunningProcess = null;

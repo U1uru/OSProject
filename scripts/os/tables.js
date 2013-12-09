@@ -7,7 +7,7 @@
 function tables() {
    var memTable = document.getElementById("memoryOutput");
    var text = "";
-   for(i = 0;i < 256;i++)
+   for(i = 0;i < _MEMORY_SIZE;i++)
       text += _Memory[i] + " ";
    memTable.value = text;
 
