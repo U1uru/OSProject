@@ -39,6 +39,15 @@ function Cpu() {
         this.Zflag = PCB.zFlag;
     };
     
+    //clear cpu without stopping execution
+    this.clear = function() {
+        this.PC    = 0;
+        this.Acc   = 0;
+        this.Xreg  = 0;
+        this.Yreg  = 0;
+        this.Zflag = 0;
+    };
+
     this.cycle = function() {
         krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
@@ -146,8 +155,15 @@ function noOp()
 
 function breakSysCall()
 {
-    _CPU.isExecuting = false;
     _RunningProcess.state = "terminated";
+    if(_ReadyQueue.isEmpty())
+        _CPU.isExecuting = false;
+    else{
+        _CPU.clear();
+        _RunningProcess = _ReadyQueue.dequeue();
+        _RunningProcess.state = "running";
+        _CPU.switch(_RunningProcess);
+    }
 }
 
 function compareMemToX()

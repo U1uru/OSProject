@@ -38,6 +38,8 @@ var _MemManager = null;
 
 var _ProcessArray = null;
 
+var _ReadyQueue = null;
+
 var _RunningProcess = null;
 
 var _OSclock = 0;       // Page 23.

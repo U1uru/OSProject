@@ -129,6 +129,13 @@ function shellInit() {
     sc.function = shellRun;
     this.commandList[this.commandList.length] = sc;
 
+    // runall
+    sc = new ShellCommand();
+    sc.command = "runall";
+    sc.description = "- Runs all programs in memory.";
+    sc.function = shellRunAll;
+    this.commandList[this.commandList.length] = sc;
+
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
 
@@ -464,7 +471,7 @@ function shellRun(args)
     //make sure pid is given and corresponds to a process
     if(args.length > 0 && _ProcessArray[args[0]] != null)
     {
-        _CPU.init();
+        _CPU.clear();
         _RunningProcess = _ProcessArray[args[0]];
         _RunningProcess.state = "running";
         _CPU.switch(_RunningProcess);
@@ -472,4 +479,18 @@ function shellRun(args)
     }
     else
         _StdOut.putText("PID invalid");
+}
+
+function shellRunAll(args)
+{
+    var process;
+    for(i = 0;i < _ProcessArray.length;i++){
+        process = _ProcessArray[i];
+        _ReadyQueue.enqueue(process);
+    }
+    _CPU.clear();
+    _RunningProcess = _ReadyQueue.dequeue();
+    _RunningProcess.state = "running";
+    _CPU.switch(_RunningProcess);
+    _CPU.isExecuting = true;
 }
