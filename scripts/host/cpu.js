@@ -156,8 +156,10 @@ function noOp()
 function breakSysCall()
 {
     _RunningProcess.state = "terminated";
-    if(_ReadyQueue.isEmpty())
+    if(_ReadyQueue.isEmpty()){
         _CPU.isExecuting = false;
+        _RunningProcess = null;
+    }
     else{
         _CPU.clear();
         _RunningProcess = _ReadyQueue.dequeue();

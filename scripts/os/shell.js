@@ -136,15 +136,26 @@ function shellInit() {
     sc.function = shellRunAll;
     this.commandList[this.commandList.length] = sc;
 
-    // quantum
+    // quantum <int>
     sc = new ShellCommand();
     sc.command = "quantum";
     sc.description = "<int> - sets the round robin quantum";
     sc.function = shellQuantum;
     this.commandList[this.commandList.length] = sc;
 
-    // processes - list the running processes and their IDs
-    // kill <id> - kills the specified process id.
+    // processes 
+    sc = new ShellCommand();
+    sc .command = "processes";
+    sc.description = "- list the running processes and their IDs";
+    sc.function = shellProcesses;
+    this.commandList[this.commandList.length] = sc;
+
+    // kill <id>
+    sc = new ShellCommand();
+    sc.command = "kill";
+    sc.description = "- kills the specified process id.";
+    sc.function = shellKill;
+    this.commandList[this.commandList.length] = sc;
 
     //
     // Display the initial prompt.
@@ -508,4 +519,35 @@ function shellQuantum(args)
         _Quantum = parseInt(args[0]);
     else
         _StdOut.putText("Please supply desired number of clock cycles.");
+}
+
+function shellProcesses(args)
+{
+    if(_ProcessArray.length === 0)
+        _StdOut.putText("No active processes");
+    else{
+        for(i = 0;i < _ProcessArray.length;i++){
+            _StdOut.putText("Process "+_ProcessArray[i].pid+": "+_ProcessArray[i].state);
+            _StdOut.advanceLine();
+        }
+    }
+}
+
+function shellKill(args)
+{
+    var ID = parseInt(args[0]);
+    if(args.length > 0 && _ProcessArray[parseInt(args[0])] != null){
+        if(_ProcessArray[ID].state === "ready"){
+            for(i = 0;i < _ReadyQueue.q.length;i++){
+                if(_ReadyQueue.q[i].pid === ID)
+                    _ReadyQueue.q.splice(i,1);
+            }
+        }
+        else if(_ProcessArray[ID].state === "running")
+            breakSysCall();
+        //delete _ProcessArray[ID];
+        _ProcessArray.splice(ID,1);
+    }
+    else
+        _StdOut.putText("Please supply a valid target.");
 }
