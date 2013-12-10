@@ -136,6 +136,13 @@ function shellInit() {
     sc.function = shellRunAll;
     this.commandList[this.commandList.length] = sc;
 
+    // quantum
+    sc = new ShellCommand();
+    sc.command = "quantum";
+    sc.description = "<int> - sets the round robin quantum";
+    sc.function = shellQuantum;
+    this.commandList[this.commandList.length] = sc;
+
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
 
@@ -493,4 +500,12 @@ function shellRunAll(args)
     _RunningProcess.state = "running";
     _CPU.switch(_RunningProcess);
     _CPU.isExecuting = true;
+}
+
+function shellQuantum(args)
+{
+    if(args.length > 0 && parseInt(args[0]) > 0)
+        _Quantum = parseInt(args[0]);
+    else
+        _StdOut.putText("Please supply desired number of clock cycles.");
 }

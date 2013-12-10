@@ -20,6 +20,10 @@ var TIMER_IRQ = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt prio
                     // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;  
 
+var _MEMORY_SIZE = 768;
+
+var _MEMORY_PARTITION_SIZE = 256;
+
 
 //
 // Global Variables
@@ -30,10 +34,6 @@ var _PID = 0;
 
 var _Memory = null;
 
-var _MEMORY_SIZE = 768;
-
-var _MEMORY_PARTITION_SIZE = 256;
-
 var _MemManager = null;
 
 var _ProcessArray = null;
@@ -42,9 +42,11 @@ var _ReadyQueue = null;
 
 var _RunningProcess = null;
 
+var _Quantum = 6;
+
 var _OSclock = 0;       // Page 23.
 
-var _Mode = 0;   // 0 = Kernel Mode, 1 = User Mode.  See page 21.
+//var _Mode = 0;   // 0 = Kernel Mode, 1 = User Mode.  See page 21.
 
 var _Commands = new Array();
 var _CommandPlace = 0;
