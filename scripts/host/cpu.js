@@ -146,7 +146,8 @@ function noOp()
 
 function breakSysCall()
 {
-    _CPU.isExecuting = false;//need to add more
+    _CPU.isExecuting = false;
+    _RunningProcess.state = "terminated";
 }
 
 function compareMemToX()

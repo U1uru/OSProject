@@ -18,4 +18,10 @@ function tables() {
           "\nY Register: " + _CPU.Yreg.toString(16).toUpperCase() +
           "\nZ Flag: " + _CPU.Zflag.toString(16).toUpperCase();
    cpuTable.value = text;
+
+   var pcbTable = document.getElementById("PCBs");
+   text = "PID\tBase Address\tLimit Address\tState\n";
+   if(_RunningProcess != null)
+   text += _RunningProcess.pid+"\t"+_RunningProcess.base+"\t\t"+_RunningProcess.limit+"\t\t"+_RunningProcess.state;
+   pcbTable.value = text;
 }
