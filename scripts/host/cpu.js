@@ -22,6 +22,7 @@ function Cpu() {
     this.isExecuting = false;
     
     this.init = function() {
+        console.log("hi");
         this.PC    = 0;
         this.Acc   = 0;
         this.Xreg  = 0;
@@ -76,27 +77,124 @@ function Cpu() {
 
 function loadAccWithConst()
 {
-    _CPU.Acc = parseInt(_Memory[++_CPU.PC],16);
+    _CPU.Acc = parseInt(_MemManager.getNextByte(),16);
     _CPU.PC++;
 }
 
 function loadAccFromMem()
 {
-    var adr1 = _Memory[++_CPU.PC];
-    var adr2 = _Memory[++_CPU.PC];
+    var adr1 = _MemManager.getNextByte();
+    var adr2 = _MemManager.getNextByte();
     //command switches params for some reason?
     //i.e. LDA $0010 -> AD 10 00
     var memAddress = adr2 + adr1;
-    _CPU.Acc = parseInt(_Memory[parseInt(memAddress,16)],16);
+    _CPU.Acc = parseInt(_MemManager.getByte(parseInt(memAddress,16)),16);
     _CPU.PC++;
 }
 
-function storeAccInMem()
+function storeAccInMem()//has weird bug
 {
+    var adr1 = _MemManager.getNextByte();
+    var adr2 = _MemManager.getNextByte();
+    var memAddress = adr2 + adr1;
+    _MemManager.setByte(parseInt(memAddress,16),_CPU.Acc.toString(16));
+    _CPU.PC++;
+}
 
+function addWithCarry()
+{
+    var adr1 = _MemManager.getNextByte();
+    var adr2 = _MemManager.getNextByte();
+    var memAddress = adr2 + adr1;
+    _CPU.Acc += parseInt(_MemManager.getByte(parseInt(memAddress,16)),16);
+    _CPU.PC++;
+}
+
+function loadXWithConst()
+{
+    _CPU.Xreg = parseInt(_MemManager.getNextByte(),16);
+    _CPU.PC++;
+}
+
+function loadXFromMem()
+{
+    var adr1 = _MemManager.getNextByte();
+    var adr2 = _MemManager.getNextByte();
+    var memAddress = adr2 + adr1;
+    _CPU.Xreg = parseInt(_MemManager.getByte(parseInt(memAddress,16)),16);
+    _CPU.PC++;
+}
+
+function loadYWithConst()
+{
+    _CPU.Yreg = parseInt(_MemManager.getNextByte(),16);
+    _CPU.PC++;
+}
+
+function loadYFromMem()
+{
+    var adr1 = _MemManager.getNextByte();
+    var adr2 = _MemManager.getNextByte();
+    var memAddress = adr2 + adr1;
+    _CPU.Yreg = parseInt(_MemManager.getByte(parseInt(memAddress,16)),16);
+    _CPU.PC++;
+}
+
+function noOp()
+{
+    _CPU.PC++;
 }
 
 function breakSysCall()
 {
     _CPU.isExecuting = false;
+}
+
+function compareMemToX()
+{
+    var adr1 = _MemManager.getNextByte();
+    var adr2 = _MemManager.getNextByte();
+    var memAddress = adr2 + adr1;
+    if(parseInt(_MemManager.getByte(parseInt(memAddress,16)),16) === _CPU.Xreg)
+        _CPU.Zflag = 1;
+    else
+        _CPU.Zflag = 0;
+    _CPU.PC++;
+}
+
+function branchIfNotZ()
+{
+    if(_CPU.Zflag === 0){
+        _CPU.PC += parseInt(_MemManager.getNextByte(),16)
+        if(_CPU.PC > (_MEMORY_PARTITION_SIZE - 1))
+            _CPU.PC -= _MEMORY_PARTITION_SIZE;
+    }
+    else
+        _CPU.PC += 2;
+}
+
+function incrByteValue()
+{
+    var adr1 = _MemManager.getNextByte();
+    var adr2 = _MemManager.getNextByte();
+    var memAddress = adr2 + adr1;
+    var oldValue = parseInt(_MemManager.getByte(parseInt(memAddress,16)),16);
+    var newValue = (oldValue + 1).toString(16);
+    _MemManager.setByte(parseInt(memAddress,16),newValue);//seems to be occasional bug with setByte?
+    _CPU.PC++;
+}
+
+function sysCall()
+{
+    if(_CPU.Xreg === 1){
+        //print integer in yreg
+        var yValue = _CPU.Yreg.toString(16)
+        _StdIn.putText(yValue);
+        _Console.advanceLine();
+        _Console.putText(_OsShell.promptStr);
+    }
+    else if(_CPU.Xreg === 2){
+        //print 00 term str at address in yreg
+    }
+    _CPU.PC++;
 }

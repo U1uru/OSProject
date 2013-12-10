@@ -32,6 +32,8 @@ var _Memory = null;
 
 var _MEMORY_SIZE = 768;
 
+var _MEMORY_PARTITION_SIZE = 256;
+
 var _MemManager = null;
 
 var _ProcessArray = null;

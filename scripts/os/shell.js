@@ -464,6 +464,7 @@ function shellRun(args)
     //make sure pid is given and corresponds to a process
     if(args.length > 0 && _ProcessArray[args[0]] != null)
     {
+        _CPU.init();
         _RunningProcess = _ProcessArray[args[0]];
         _RunningProcess.state = "running";
         _CPU.switch(_RunningProcess);
