@@ -95,6 +95,8 @@ function hostBtnStartOS_click(btn)
     // Create and initialize memory
     _Memory = new Memory();
 
+    _MemManager = new memManager();
+
     //initialize array of processes in memory
     _ProcessArray = new Array();
 

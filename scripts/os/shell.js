@@ -453,11 +453,23 @@ function shellLoad(args)
     var results = loadUserProgram();
     if(results == -1)
         _StdOut.putText("Invalid hex code");
+    else if(results == -2)
+        _StdOut.putText("Program larger than available memory");
     else
         _StdOut.putText("Program loaded with PID: " + results);
 }
 
 function shellRun(args)
 {
-    _StdOut.putText("Program running. You better go catch it.");
+    //make sure pid is given and corresponds to a process
+    if(args.length > 0 && _ProcessArray[args[0]] != null)
+    {
+        _CPU.init();
+        _RunningProcess = _ProcessArray[args[0]];
+        _RunningProcess.state = "running";
+        _CPU.switch(_RunningProcess);
+        _CPU.isExecuting = true;
+    }
+    else
+        _StdOut.putText("PID invalid");
 }
