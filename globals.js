@@ -24,6 +24,9 @@ var _MEMORY_SIZE = 768;
 
 var _MEMORY_PARTITION_SIZE = 256;
 
+//scheduling algorithms
+var ROUND_ROBIN = 0;
+
 
 //
 // Global Variables
@@ -42,7 +45,11 @@ var _ReadyQueue = null;
 
 var _RunningProcess = null;
 
+var _Scheduler = null;
+
 var _Quantum = 6;
+
+var _NumCycles = 0;
 
 var _OSclock = 0;       // Page 23.
 

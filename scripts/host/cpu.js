@@ -55,6 +55,12 @@ function Cpu() {
 
         //Fetch and execute the next opcode.
         this.execute(this.fetch());
+
+        _NumCycles++;
+        if(_NumCycles >= _Quantum){
+            var interrupt = new Interrupt(TIMER_IRQ,"");
+            _KernelInterruptQueue.enqueue(interrupt);
+        }
     };
 
     //brings opcode in from memory
@@ -156,6 +162,11 @@ function noOp()
 function breakSysCall()
 {
     _RunningProcess.state = "terminated";
+    _RunningProcess.pc = 0;
+    _RunningProcess.accumulator = 0;
+    _RunningProcess.xReg = 0;
+    _RunningProcess.yReg = 0;
+    _RunningProcess.zFlag = 0;
     if(_ReadyQueue.isEmpty()){
         _CPU.isExecuting = false;
         _RunningProcess = null;
@@ -166,6 +177,8 @@ function breakSysCall()
         _RunningProcess.state = "running";
         _CPU.switch(_RunningProcess);
     }
+    _NumCycles = 0;
+
 }
 
 function compareMemToX()
