@@ -71,6 +71,8 @@ function memManager()
 
    //sets a byte at a specified address
    this.setByte = function(address, data){
+      if(data.length === 1)
+         data = "0" + data;
       var adjAddress = address + _RunningProcess.base;
       if(adjAddress < _RunningProcess.base || adjAddress > _RunningProcess.limit)
          return;

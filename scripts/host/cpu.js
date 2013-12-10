@@ -22,7 +22,6 @@ function Cpu() {
     this.isExecuting = false;
     
     this.init = function() {
-        console.log("hi");
         this.PC    = 0;
         this.Acc   = 0;
         this.Xreg  = 0;
@@ -92,7 +91,7 @@ function loadAccFromMem()
     _CPU.PC++;
 }
 
-function storeAccInMem()//has weird bug
+function storeAccInMem()
 {
     var adr1 = _MemManager.getNextByte();
     var adr2 = _MemManager.getNextByte();
@@ -147,7 +146,7 @@ function noOp()
 
 function breakSysCall()
 {
-    _CPU.isExecuting = false;
+    _CPU.isExecuting = false;//need to add more
 }
 
 function compareMemToX()
@@ -168,6 +167,7 @@ function branchIfNotZ()
         _CPU.PC += parseInt(_MemManager.getNextByte(),16)
         if(_CPU.PC > (_MEMORY_PARTITION_SIZE - 1))
             _CPU.PC -= _MEMORY_PARTITION_SIZE;
+        _CPU.PC += 2;
     }
     else
         _CPU.PC += 2;
@@ -180,7 +180,7 @@ function incrByteValue()
     var memAddress = adr2 + adr1;
     var oldValue = parseInt(_MemManager.getByte(parseInt(memAddress,16)),16);
     var newValue = (oldValue + 1).toString(16);
-    _MemManager.setByte(parseInt(memAddress,16),newValue);//seems to be occasional bug with setByte?
+    _MemManager.setByte(parseInt(memAddress,16),newValue);
     _CPU.PC++;
 }
 
@@ -189,12 +189,22 @@ function sysCall()
     if(_CPU.Xreg === 1){
         //print integer in yreg
         var yValue = _CPU.Yreg.toString(16)
-        _StdIn.putText(yValue);
+        _Console.putText(yValue);
         _Console.advanceLine();
         _Console.putText(_OsShell.promptStr);
     }
     else if(_CPU.Xreg === 2){
         //print 00 term str at address in yreg
+        var yAddress = _CPU.Yreg;
+        var byte = _MemManager.getByte(yAddress);
+        while(byte != "00"){
+            var character = String.fromCharCode(parseInt(byte,16));
+            _Console.putText(character);
+            yAddress++;
+            byte = _MemManager.getByte(yAddress);
+        }
+        _Console.advanceLine();
+        _Console.putText(_OsShell.promptStr);
     }
     _CPU.PC++;
 }
