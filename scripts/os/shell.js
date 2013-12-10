@@ -545,7 +545,15 @@ function shellKill(args)
         }
         else if(_ProcessArray[ID].state === "running")
             breakSysCall();
-        //delete _ProcessArray[ID];
+        switch(_ProcessArray[ID].base)
+        {
+            case 0:
+                _MemManager.clear0();break;
+            case 256:
+                _MemManager.clear1();break;
+            case 512:
+                _MemManager.clear2();break;
+        }
         _ProcessArray.splice(ID,1);
     }
     else

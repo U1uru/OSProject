@@ -79,4 +79,20 @@ function memManager()
       _Memory[adjAddress] = data.toUpperCase();
    }
 
+   //clear mem sections
+   this.clear0 = function(){
+      this.mm.sect0.open = true;
+      for(i = 0; i < 256;i++)
+         _Memory[i] = "00";
+   }
+   this.clear1 = function(){
+      this.mm.sect1.open = true;
+      for(i = 256; i < 512;i++)
+         _Memory[i] = "00";
+   }
+   this.clear2 = function(){
+      this.mm.sect2.open = true;
+      for(i = 512; i < 768;i++)
+         _Memory[i] = "00";
+   }
 }
