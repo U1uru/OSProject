@@ -39,6 +39,15 @@ function Cpu() {
         this.Zflag = PCB.zFlag;
     };
     
+    //clear cpu without stopping execution
+    this.clear = function() {
+        this.PC    = 0;
+        this.Acc   = 0;
+        this.Xreg  = 0;
+        this.Yreg  = 0;
+        this.Zflag = 0;
+    };
+
     this.cycle = function() {
         krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
@@ -46,6 +55,12 @@ function Cpu() {
 
         //Fetch and execute the next opcode.
         this.execute(this.fetch());
+
+        _NumCycles++;
+        if(_NumCycles >= _Quantum){
+            var interrupt = new Interrupt(TIMER_IRQ,"");
+            _KernelInterruptQueue.enqueue(interrupt);
+        }
     };
 
     //brings opcode in from memory
@@ -70,6 +85,7 @@ function Cpu() {
            case "D0": branchIfNotZ(); break;
            case "EE": incrByteValue(); break;
            case "FF": sysCall(); break;
+           default: invalid(); break;
         }
     };
 }
@@ -146,8 +162,24 @@ function noOp()
 
 function breakSysCall()
 {
-    _CPU.isExecuting = false;
     _RunningProcess.state = "terminated";
+    _RunningProcess.pc = 0;
+    _RunningProcess.accumulator = 0;
+    _RunningProcess.xReg = 0;
+    _RunningProcess.yReg = 0;
+    _RunningProcess.zFlag = 0;
+    if(_ReadyQueue.isEmpty()){
+        _CPU.isExecuting = false;
+        _RunningProcess = null;
+    }
+    else{
+        _CPU.clear();
+        _RunningProcess = _ReadyQueue.dequeue();
+        _RunningProcess.state = "running";
+        _CPU.switch(_RunningProcess);
+    }
+    _NumCycles = 0;
+
 }
 
 function compareMemToX()
@@ -208,4 +240,10 @@ function sysCall()
         _Console.putText(_OsShell.promptStr);
     }
     _CPU.PC++;
+}
+
+function invalid()
+{
+    var interrupt = new Interrupt(PROGRAM_IRQ,"Invalid Op Code");
+    _KernelInterruptQueue.enqueue(interrupt);
 }

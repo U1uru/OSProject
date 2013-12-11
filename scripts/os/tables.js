@@ -20,8 +20,10 @@ function tables() {
    cpuTable.value = text;
 
    var pcbTable = document.getElementById("PCBs");
-   text = "PID\tBase Address\tLimit Address\tState\n";
+   text = "PID\tBase Address\tLimit Address\tState";
    if(_RunningProcess != null)
-   text += _RunningProcess.pid+"\t"+_RunningProcess.base+"\t\t"+_RunningProcess.limit+"\t\t"+_RunningProcess.state;
+      text += "\n"+ _RunningProcess.pid+"\t"+ _RunningProcess.base+"\t\t"+ _RunningProcess.limit+"\t\t"+ _RunningProcess.state;
+   for(i = 0;i < _ReadyQueue.q.length;i++)
+      text += "\n"+_ReadyQueue.q[i].pid+"\t"+_ReadyQueue.q[i].base+"\t\t"+_ReadyQueue.q[i].limit+"\t\t"+_ReadyQueue.q[i].state;
    pcbTable.value = text;
 }

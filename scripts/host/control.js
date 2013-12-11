@@ -100,6 +100,10 @@ function hostBtnStartOS_click(btn)
     //initialize array of processes in memory
     _ProcessArray = new Array();
 
+    _ReadyQueue = new Queue();
+
+    _Scheduler = new scheduler();
+
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);
     // .. and call the OS Kernel Bootstrap routine.

@@ -129,8 +129,33 @@ function shellInit() {
     sc.function = shellRun;
     this.commandList[this.commandList.length] = sc;
 
-    // processes - list the running processes and their IDs
-    // kill <id> - kills the specified process id.
+    // runall
+    sc = new ShellCommand();
+    sc.command = "runall";
+    sc.description = "- Runs all programs in memory.";
+    sc.function = shellRunAll;
+    this.commandList[this.commandList.length] = sc;
+
+    // quantum <int>
+    sc = new ShellCommand();
+    sc.command = "quantum";
+    sc.description = "<int> - sets the round robin quantum";
+    sc.function = shellQuantum;
+    this.commandList[this.commandList.length] = sc;
+
+    // processes 
+    sc = new ShellCommand();
+    sc .command = "processes";
+    sc.description = "- list the running processes and their IDs";
+    sc.function = shellProcesses;
+    this.commandList[this.commandList.length] = sc;
+
+    // kill <id>
+    sc = new ShellCommand();
+    sc.command = "kill";
+    sc.description = "- kills the specified process id.";
+    sc.function = shellKill;
+    this.commandList[this.commandList.length] = sc;
 
     //
     // Display the initial prompt.
@@ -464,7 +489,7 @@ function shellRun(args)
     //make sure pid is given and corresponds to a process
     if(args.length > 0 && _ProcessArray[args[0]] != null)
     {
-        _CPU.init();
+        _CPU.clear();
         _RunningProcess = _ProcessArray[args[0]];
         _RunningProcess.state = "running";
         _CPU.switch(_RunningProcess);
@@ -472,4 +497,66 @@ function shellRun(args)
     }
     else
         _StdOut.putText("PID invalid");
+}
+
+function shellRunAll(args)
+{
+    var process;
+    for(i = 0;i < _ProcessArray.length;i++){
+        process = _ProcessArray[i];
+        _ReadyQueue.enqueue(process);
+    }
+    _CPU.clear();
+    _RunningProcess = _ReadyQueue.dequeue();
+    _RunningProcess.state = "running";
+    _CPU.switch(_RunningProcess);
+    _CPU.isExecuting = true;
+}
+
+function shellQuantum(args)
+{
+    if(args.length > 0 && parseInt(args[0]) > 0)
+        _Quantum = parseInt(args[0]);
+    else
+        _StdOut.putText("Please supply desired number of clock cycles.");
+}
+
+function shellProcesses(args)
+{
+    if(_ProcessArray.length === 0)
+        _StdOut.putText("No active processes");
+    else{
+        for(i = 0;i < _ProcessArray.length;i++){
+            _StdOut.putText("Process "+_ProcessArray[i].pid+": "+_ProcessArray[i].state);
+            _StdOut.advanceLine();
+        }
+    }
+}
+
+function shellKill(args)
+{
+    console.log("here i am!");
+    var ID = parseInt(args[0]);
+    if(args.length > 0 && _ProcessArray[parseInt(args[0])] != null){
+        if(_ProcessArray[ID].state === "ready"){
+            for(i = 0;i < _ReadyQueue.q.length;i++){
+                if(_ReadyQueue.q[i].pid === ID)
+                    _ReadyQueue.q.splice(i,1);
+            }
+        }
+        else if(_ProcessArray[ID].state === "running")
+            breakSysCall();
+        switch(_ProcessArray[ID].base)
+        {
+            case 0:
+                _MemManager.clear0();break;
+            case 256:
+                _MemManager.clear1();break;
+            case 512:
+                _MemManager.clear2();break;
+        }
+        _ProcessArray.splice(ID,1);
+    }
+    else
+        _StdOut.putText("Please supply a valid target.");
 }

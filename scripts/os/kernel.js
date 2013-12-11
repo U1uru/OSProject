@@ -137,6 +137,9 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
             break;
+        case PROGRAM_IRQ:
+            krnProgramISR(params);
+            break;
         default: 
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
     }
@@ -145,8 +148,14 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
 function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Routine (as opposed to an ISR coming from a device driver).
 {
     // Check multiprogramming parameters and enforce quanta here. Call the scheduler / context switch here if necessary.
+    _Scheduler.contextSwitch();
 }   
 
+function krnProgramISR(param) // handles program failure, due to either invalid opcode or memory fault
+{
+    krnTrace(param + " at instruction " + _CPU.PC);
+    shellKill([_RunningProcess.pid]);
+}
 
 
 //
@@ -176,7 +185,7 @@ function krnTrace(msg)
       if (msg === "Idle")
       {
          // We can't log every idle clock pulse because it would lag the browser very quickly.
-         if (_OSclock % 10 == 0)  // Check the CPU_CLOCK_INTERVAL in globals.js for an 
+         if (_OSclock % 100 == 0)  // Check the CPU_CLOCK_INTERVAL in globals.js for an 
          {                        // idea of the tick rate and adjust this line accordingly.
             hostLog(msg, "OS");
          }         
