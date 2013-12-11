@@ -85,6 +85,7 @@ function Cpu() {
            case "D0": branchIfNotZ(); break;
            case "EE": incrByteValue(); break;
            case "FF": sysCall(); break;
+           default: invalid(); break;
         }
     };
 }
@@ -239,4 +240,10 @@ function sysCall()
         _Console.putText(_OsShell.promptStr);
     }
     _CPU.PC++;
+}
+
+function invalid()
+{
+    var interrupt = new Interrupt(PROGRAM_IRQ,"Invalid Op Code");
+    _KernelInterruptQueue.enqueue(interrupt);
 }

@@ -51,7 +51,7 @@ function krnBootstrap()      // Page 8.
 
    // Finally, initiate testing.
    if (_GLaDOS) {
-      _GLaDOS.afterStartup();
+      //_GLaDOS.afterStartup();
    }
 }
 
@@ -137,6 +137,9 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
             break;
+        case PROGRAM_IRQ:
+            krnProgramISR(params);
+            break;
         default: 
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
     }
@@ -148,6 +151,11 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
     _Scheduler.contextSwitch();
 }   
 
+function krnProgramISR(param) // handles program failure, due to either invalid opcode or memory fault
+{
+    krnTrace(param + " at instruction " + _CPU.PC);
+    shellKill([_RunningProcess.pid]);
+}
 
 
 //

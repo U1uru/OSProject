@@ -54,9 +54,8 @@ function memManager()
       _CPU.PC++;
       if(_CPU.PC + _RunningProcess.base > _RunningProcess.limit){
          _CPU.PC--;
-         //illegal memory access error
-         //do more about this later
-         return;
+         var interrupt = new Interrupt(PROGRAM_IRQ,"Illegal Memory Access");
+         _KernelInterruptQueue.enqueue(interrupt);
       }
       return _Memory[_CPU.PC + _RunningProcess.base];
    }
@@ -64,8 +63,10 @@ function memManager()
    //return a byte from a specified address
    this.getByte = function(address){
       var adjAddress = address + _RunningProcess.base;
-      if(adjAddress < _RunningProcess.base || adjAddress > _RunningProcess.limit)
-         return;
+      if(adjAddress < _RunningProcess.base || adjAddress > _RunningProcess.limit){
+         var interrupt = new Interrupt(PROGRAM_IRQ,"Illegal Memory Access");
+         _KernelInterruptQueue.enqueue(interrupt);
+      }
       return _Memory[adjAddress];
    }
 
@@ -74,8 +75,10 @@ function memManager()
       if(data.length === 1)
          data = "0" + data;
       var adjAddress = address + _RunningProcess.base;
-      if(adjAddress < _RunningProcess.base || adjAddress > _RunningProcess.limit)
-         return;
+      if(adjAddress < _RunningProcess.base || adjAddress > _RunningProcess.limit){
+         var interrupt = new Interrupt(PROGRAM_IRQ,"Illegal Memory Access");
+         _KernelInterruptQueue.enqueue(interrupt);
+      }
       _Memory[adjAddress] = data.toUpperCase();
    }
 

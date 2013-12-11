@@ -535,6 +535,7 @@ function shellProcesses(args)
 
 function shellKill(args)
 {
+    console.log("here i am!");
     var ID = parseInt(args[0]);
     if(args.length > 0 && _ProcessArray[parseInt(args[0])] != null){
         if(_ProcessArray[ID].state === "ready"){
