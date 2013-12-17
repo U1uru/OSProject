@@ -579,8 +579,11 @@ function shellKill(args)
 
 function shellFormat(args)
 {
-    krnFSDriver.format();
-    _StdOut.putText("Hard disk drive formatted.");
+    var success = krnFSDriver.format();
+    if(success)
+        _StdOut.putText("Hard disk drive formatted.");
+    else
+        _StdOut.putText("Error while formatting drive");
 }
 
 function shellCreate(args)
@@ -590,11 +593,12 @@ function shellCreate(args)
         var file = args[0]
         for(i = 1;i < args.length;i++)
             file += " "+args[i];
-        if(file.length >= 60)
-            _StdOut.putText("Filename too long");
+        var result = krnFSDriver.create(file);
+        if(result === true)
+            _StdOut.putText("File "+file+" created.");
         else
         {
-            _StdOut.putText("Okay we'll make "+file);
+            _StdOut.putText(result);
         }
     }
     else
