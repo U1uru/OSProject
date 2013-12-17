@@ -153,8 +153,22 @@ function shellInit() {
     // kill <id>
     sc = new ShellCommand();
     sc.command = "kill";
-    sc.description = "- kills the specified process id.";
+    sc.description = " <PID>- kills the specified process id.";
     sc.function = shellKill;
+    this.commandList[this.commandList.length] = sc;
+
+    //format
+    sc = new ShellCommand();
+    sc.command = "format";
+    sc.description = "clears hard drive."
+    sc.function = shellFormat;
+    this.commandList[this.commandList.length] = sc;
+
+    //create <filename>
+    sc = new ShellCommand();
+    sc.command = "create";
+    sc.description = " <filename>- creates new file with <filename>."
+    sc.function = shellCreate;
     this.commandList[this.commandList.length] = sc;
 
     //
@@ -461,6 +475,8 @@ function shellStatus(args)
     if (args.length > 0)
     {
         _Status = args[0];
+        for(i = 1;i < args.length;i++)
+           _Status += " " + args[i];
     }
     else
     {
@@ -559,4 +575,28 @@ function shellKill(args)
     }
     else
         _StdOut.putText("Please supply a valid target.");
+}
+
+function shellFormat(args)
+{
+    krnFSDriver.format();
+    _StdOut.putText("Hard disk drive formatted.");
+}
+
+function shellCreate(args)
+{
+    if(args.length > 0)
+    {
+        var file = args[0]
+        for(i = 1;i < args.length;i++)
+            file += " "+args[i];
+        if(file.length >= 60)
+            _StdOut.putText("Filename too long");
+        else
+        {
+            _StdOut.putText("Okay we'll make "+file);
+        }
+    }
+    else
+        _StdOut.putText("Please supply a filename")
 }

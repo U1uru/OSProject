@@ -93,6 +93,6 @@ var _SarcasticMode = false;
 
 // Global Device Driver Objects - page 12
 var krnKeyboardDriver = null;
-
+var krnFSDriver = null;
 // For testing...
 var _GLaDOS = null;

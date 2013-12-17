@@ -26,4 +26,15 @@ function tables() {
    for(i = 0;i < _ReadyQueue.q.length;i++)
       text += "\n"+_ReadyQueue.q[i].pid+"\t"+_ReadyQueue.q[i].base+"\t\t"+_ReadyQueue.q[i].limit+"\t\t"+_ReadyQueue.q[i].state;
    pcbTable.value = text;
+
+   var storageTable = document.getElementById("storageOutput");
+   text = "T,S,B\tData";
+   for(i = 0;i < krnFSDriver.numTracks;i++){
+      for(j = 0; j < krnFSDriver.numSectors;j++){
+         for(k = 0;k < krnFSDriver.numBlocks;k++){
+            text += "\n" + i+","+j+","+k + " | " +sessionStorage[i+","+j+","+k];
+         }
+      }
+   }
+   storageTable.value = text;
 }
