@@ -160,15 +160,22 @@ function shellInit() {
     //format
     sc = new ShellCommand();
     sc.command = "format";
-    sc.description = "clears hard drive."
+    sc.description = "clears hard drive.";
     sc.function = shellFormat;
     this.commandList[this.commandList.length] = sc;
 
     //create <filename>
     sc = new ShellCommand();
     sc.command = "create";
-    sc.description = " <filename>- creates new file with <filename>."
+    sc.description = " <filename>- creates new file with <filename>.";
     sc.function = shellCreate;
+    this.commandList[this.commandList.length] = sc;
+
+    //write <filename> "data"
+    sc = new ShellCommand();
+    sc.command = "write";
+    sc.description = " <filename> data- writes data to <filename>.";
+    sc.function = shellWrite;
     this.commandList[this.commandList.length] = sc;
 
     //
@@ -603,4 +610,37 @@ function shellCreate(args)
     }
     else
         _StdOut.putText("Please supply a filename")
+}
+
+function shellWrite(args)
+{
+    if(args.length < 2)
+        _StdOut.putText("invalid input");
+    else{
+        var file = args[0];
+        var data;
+        var dataStart = false;
+        for(i = 1;i < args.length;i++){
+            if(!dataStart){
+                if(args[i][0] === "\""){
+                    dataStart = true;
+                    data = args[i].slice(1);
+                    if(data.slice(-1) === "\"")
+                       data = data.slice(0,-1);
+                    continue;
+                }
+                file += " "+args[i];
+            }
+            else{
+                data += " " + args[i];
+                if(data.slice(-1) === "\"")
+                    data = data.slice(0,-1);
+            }
+        }
+        var result = krnFSDriver.write(file,data);
+        if(result === true)
+            _StdOut.putText("write successful");
+        else
+            _StdOut.putText(result);
+    }
 }

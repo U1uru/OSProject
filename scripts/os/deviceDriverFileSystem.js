@@ -88,6 +88,30 @@ function DeviceDriverFileSystem()
       }
    }
 
+   this.write = function(fileName,data){
+      try{
+         if(data.length < 60){
+            for(i = 0;i < this.numSectors;i++){
+               for(j = 0;j < this.numBlocks;j++){
+                  var block = sessionStorage["0,"+i+","+j];
+                  if(this.getData(block) === fileName){
+                     var dataAddress = block[1]+","+block[2]+","+block[3];
+                     var writeData = data + "Ω" + sessionStorage[dataAddress].slice(data.length+1);
+                     sessionStorage[dataAddress] = writeData;
+                     return true;
+                  }
+               }
+            }
+            return "file not found";
+         }
+      }
+      catch(error)
+      {
+         console.log(error);
+         return "unknown error; write failed";
+      }
+   }
+
    this.getData = function(block){
       var data = "";
       var i = this.dataOffset;
