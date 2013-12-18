@@ -171,10 +171,17 @@ function shellInit() {
     sc.function = shellCreate;
     this.commandList[this.commandList.length] = sc;
 
+    //read <filename>
+    sc = new ShellCommand();
+    sc.command = "read";
+    sc.description = " <filename>- reads <filename> from disk.";
+    sc.function = shellRead;
+    this.commandList[this.commandList.length] = sc;
+
     //write <filename> "data"
     sc = new ShellCommand();
     sc.command = "write";
-    sc.description = " <filename> data- writes data to <filename>.";
+    sc.description = " <filename> \"data\"- writes \"data\" to <filename>.";
     sc.function = shellWrite;
     this.commandList[this.commandList.length] = sc;
 
@@ -610,6 +617,20 @@ function shellCreate(args)
     }
     else
         _StdOut.putText("Please supply a filename")
+}
+
+function shellRead(args)
+{
+    if(args.length > 0)
+    {
+        var file = args[0];
+        for(i = 1;i < args.length;i++)
+            file += " " + args[i];
+        var result = krnFSDriver.read(file);
+        _StdOut.putText(result);
+    }
+    else
+        _StdOut.putText("Please supply filename");
 }
 
 function shellWrite(args)

@@ -32,6 +32,7 @@ function DeviceDriverFileSystem()
       }
       catch(error)
       {
+         krnTrace(error);
          return false;
       }
    }
@@ -81,7 +82,36 @@ function DeviceDriverFileSystem()
       }
       catch(error)
       {
-         return "Unknown error; could not create file";
+         krnTrace(error);
+         return "File creation failed. See log for details.";
+      }
+   }
+
+   this.read = function(fileName){
+      try
+      {
+         var data = "";
+         for(i = 0;i < this.numSectors;i++){
+            for(j = 0;j < this.numBlocks;j++){
+               var block = sessionStorage["0,"+i+","+j];
+               if(this.getData(block) === fileName){
+                  var addrs = block.slice(0,4);
+                  do {
+                     block = sessionStorage[addrs[1]+","+addrs[2]+","+addrs[3]];
+                     data += this.getData(block);
+                     addrs = block.slice(0,4);
+                  }
+                  while(addrs[0] === "2");
+                  return data;
+               }
+            }
+         }
+         return "Error: file not found";
+      }
+      catch(error)
+      {
+         krnTrace(error);
+         return "File read failed. See log for details.";
       }
    }
 
@@ -141,8 +171,8 @@ function DeviceDriverFileSystem()
       }
       catch(error)
       {
-         console.log(error);
-         return "unknown error; write failed";
+         krnTrace(error);
+         return "File write failed. See log for details.";
       }
    }
 
