@@ -12,19 +12,17 @@ function DeviceDriverFileSystem()
    this.numBlocks = 8;
    this.numBytes = 64;
    this.dataOffset = 4;
+   this.emptyBytes = "";
+   for(i = 0;i<this.numBytes;i++)this.emptyBytes+="-";
 
    this.format = function(){
 
       try
       {
-         var emptyBytes = "";
-         for(i = 1; i < this.numBytes;i++)
-            emptyBytes += "-";
-
          for(i = 0;i < this.numTracks;i++){
             for(j = 0; j < this.numSectors;j++){
                for(k = 0;k < this.numBlocks;k++){
-                  var data = "0" + emptyBytes;
+                  var data = "0---";
                   sessionStorage[i+","+j+","+k] = data;
                }
             }
@@ -40,9 +38,10 @@ function DeviceDriverFileSystem()
    
    this.create = function(fileName){
 
-      try{
-         if(fileName.length >= 60)
-            return "Filename too long. Must be under 60 characters.";
+      try
+      {
+         if(fileName.length > 60)
+            return "Filename too long. Max is 60 characters.";
          var dirT,dirS,dirB,dataT,dataS,dataB;
          var set = false;
          for(j = 0; j < this.numSectors;j++){
@@ -75,11 +74,9 @@ function DeviceDriverFileSystem()
          }
          if(!set)
             return "Error: Memory full";
-         var dirData = "1"+dataT+dataS+dataB+fileName+"Ω";
-         var dirEntry = dirData + sessionStorage[dirT+","+dirS+","+dirB].slice(dirData.length);
-         sessionStorage[dirT+","+dirS+","+dirB] = dirEntry;
-         var fileData = "1" + sessionStorage[dataT+","+dataS+","+dataB].slice(1);
-         sessionStorage[dataT+","+dataS+","+dataB] = fileData;
+         var dirData = "1"+dataT+dataS+dataB+fileName;
+         sessionStorage[dirT+","+dirS+","+dirB] = dirData;
+         sessionStorage[dataT+","+dataS+","+dataB] = "1---";
          return true;
       }
       catch(error)
@@ -89,21 +86,58 @@ function DeviceDriverFileSystem()
    }
 
    this.write = function(fileName,data){
-      try{
-         if(data.length < 60){
-            for(i = 0;i < this.numSectors;i++){
-               for(j = 0;j < this.numBlocks;j++){
-                  var block = sessionStorage["0,"+i+","+j];
-                  if(this.getData(block) === fileName){
-                     var dataAddress = block[1]+","+block[2]+","+block[3];
-                     var writeData = data + "Ω" + sessionStorage[dataAddress].slice(data.length+1);
-                     sessionStorage[dataAddress] = writeData;
+
+      try
+      {
+         var numBlocksNeeded = Math.ceil(data.length/60);
+         var addresses = new Queue();
+         var blocksFound = 0;
+         for(i = 0;i < this.numSectors;i++){
+            for(j = 0;j < this.numBlocks;j++){
+               var block = sessionStorage["0,"+i+","+j];
+               if(this.getData(block) === fileName){
+                  var dataAddress = block[1]+","+block[2]+","+block[3];
+                  blocksFound++;
+                  if(blocksFound === numBlocksNeeded){
+                     sessionStorage[dataAddress] = "1---"+data;
                      return true;
+                  }
+                  addresses.enqueue(dataAddress);
+               }
+            }
+         }
+         if(blocksFound === 0)
+            return "Error: file not found";
+         for(i = 1;i < this.numTracks;i++){
+            for(j = 0;j < this.numSectors;j++){
+               for(k = 0;k < this.numBlocks;k++){
+                  if(blocksFound < numBlocksNeeded){
+                     var block = sessionStorage[i+","+j+","+k];
+                     if(block[0] === "0"){
+                        var dataAddress = i+","+j+","+k;
+                        addresses.enqueue(dataAddress);
+                        blocksFound++;
+                     }
                   }
                }
             }
-            return "file not found";
          }
+         if(blocksFound < numBlocksNeeded)
+            return "Error: not enough available space";
+
+         var counter = 0;
+         while(!addresses.isEmpty()){
+            var address = addresses.dequeue();
+            if(addresses.isEmpty())
+               var firstBytes = "1---";
+            else{
+               nextAddress = addresses.peek();
+               var firstBytes = "2"+nextAddress[0]+nextAddress[2]+nextAddress[4];
+            }
+            sessionStorage[address] = firstBytes + data.slice(counter*60,counter*60+60);
+            counter++;
+         }
+         return true;
       }
       catch(error)
       {
@@ -113,13 +147,6 @@ function DeviceDriverFileSystem()
    }
 
    this.getData = function(block){
-      var data = "";
-      var i = this.dataOffset;
-      var character = block[i];
-      while(!(character === "Ω") && i < this.numBytes){
-         data += character;
-         character = block[++i];
-      }
-      return data;
+      return block.slice(this.dataOffset);
    }
 }

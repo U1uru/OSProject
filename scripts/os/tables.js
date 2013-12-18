@@ -32,7 +32,8 @@ function tables() {
    for(i = 0;i < krnFSDriver.numTracks;i++){
       for(j = 0; j < krnFSDriver.numSectors;j++){
          for(k = 0;k < krnFSDriver.numBlocks;k++){
-            text += "\n" + i+","+j+","+k + " | " +sessionStorage[i+","+j+","+k];
+            var storedData = sessionStorage[i+","+j+","+k];
+            text += "\n" + i+","+j+","+k + " | " +storedData+krnFSDriver.emptyBytes.slice(storedData.length);
          }
       }
    }
