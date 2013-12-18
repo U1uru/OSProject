@@ -50,6 +50,8 @@ var _RunningProcess = null;
 
 var _Scheduler = null;
 
+var _Schedule = ROUND_ROBIN;
+
 var _Quantum = 6;
 
 var _NumCycles = 0;

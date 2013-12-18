@@ -4,7 +4,7 @@
    Handles loading of user programs into memory.
    ------------ */
 
-function loadUserProgram()
+function loadUserProgram(priority)
 {
    //check that input is valid hex code
    var input = _UserInput.value
@@ -16,7 +16,7 @@ function loadUserProgram()
    if(!_MemManager.isMemAvailable()){
       return -1;
    }
-   var process = createProcess();
+   var process = createProcess(priority);
    //separate opcodes into array and enter into mem
    var userProgramArray = input.split(/\s/);
    for(i = 0; i < userProgramArray.length; i++){
@@ -33,7 +33,7 @@ function loadUserProgram()
    return process.pid;
 }
 
-function createProcess()
+function createProcess(priority)
 {
    var state = "new";
    var pc = 0;
@@ -47,7 +47,7 @@ function createProcess()
 
    var pid = _PID++;
 
-   var newProcess = new pcb(pid, state, pc, base, limit);
+   var newProcess = new pcb(pid, state, pc, base, limit, priority);
 
    return newProcess;
 }

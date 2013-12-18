@@ -6,7 +6,6 @@
 
 function scheduler()
 {
-   this.schedulingAlg = ROUND_ROBIN;
 
    this.contextSwitch = function(){
       if(_ReadyQueue.getSize() > 0){
@@ -27,7 +26,7 @@ function scheduler()
    }
 
    this.setAlgorithm = function(schedule){
-      this.schedulingAlg = schedule;
+      _Schedule = schedule;
       _ReadyQueue.arrange()
    }
 }

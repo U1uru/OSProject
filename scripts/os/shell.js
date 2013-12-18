@@ -533,7 +533,10 @@ function shellBlueScreen(args)
 
 function shellLoad(args)
 {
-    var results = loadUserProgram();
+    var priority = 0;
+    if(args.length > 0)
+        priority = args[0];
+    var results = loadUserProgram(priority);
     if(results == -1)
         _StdOut.putText("Invalid hex code");
     else if(results == -2)
@@ -565,6 +568,7 @@ function shellRunAll(args)
         process.state = "ready";
         _ReadyQueue.enqueue(process);
     }
+    _ReadyQueue.arrange();
     _CPU.clear();
     _RunningProcess = _ReadyQueue.dequeue();
     _RunningProcess.state = "running";
@@ -727,7 +731,7 @@ function shellSetScheduler(args)
         _StdOut.putText("Please provide algorithm");
     else{
         if(args[0] === "rr")
-            _Scheduler.setAlgorithm(ROUND_ROBIN);//need to write this function
+            _Scheduler.setAlgorithm(ROUND_ROBIN);
         else if(args[0] === "fcfs")
             _Scheduler.setAlgorithm(FC_FS);
         else if(args[0] === "priority")
@@ -742,9 +746,9 @@ function shellSetScheduler(args)
 
 function shellGetScheduler(args)
 {
-    if(_Scheduler.schedulingAlg === ROUND_ROBIN)
+    if(_Schedule === ROUND_ROBIN)
         _StdOut.putText("Round Robin");
-    else if(_Scheduler.schedulingAlg === FC_FS)
+    else if(_Schedule === FC_FS)
         _StdOut.putText("First-Come, First-Serve")
     else
         _StdOut.putText("Priority");

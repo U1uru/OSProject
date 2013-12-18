@@ -57,7 +57,7 @@ function Cpu() {
         this.execute(this.fetch());
 
         _NumCycles++;
-        if(_Scheduler.schedulingAlg === ROUND_ROBIN && _NumCycles >= _Quantum){
+        if(_Schedule === ROUND_ROBIN && _NumCycles >= _Quantum){
             var interrupt = new Interrupt(TIMER_IRQ,"");
             _KernelInterruptQueue.enqueue(interrupt);
         }

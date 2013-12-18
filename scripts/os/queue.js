@@ -23,7 +23,7 @@ function Queue()
 
     this.enqueue = function(element) {
         this.q.push(element);        
-        if(_Scheduler.schedulingAlg === PRIORITY)
+        if(_Schedule === PRIORITY)
             this.arrange();
     };
     
@@ -41,10 +41,12 @@ function Queue()
     }
 
     this.arrange = function(){
-        if(_Scheduler.shedulingAlg === PRIORITY)
-            this.q.sort(function(a,b){return a.priority-b.priority});
-        else
-            this.q.sort(function(a,b){return a.pid-b.pid});
+        if(_Schedule === PRIORITY){
+            this.q.sort(comparePriority);
+        }
+        else{
+            this.q.sort(comparePID);
+        }
     }
     
     this.toString = function() {
@@ -55,4 +57,22 @@ function Queue()
         }
         return retVal;
     };
+}
+
+function comparePriority(a,b)
+{
+   if(a.priority < b.priority)
+      return -1;
+   if(a.priority > b.priority)
+      return 1;
+   return 0;
+}
+
+function comparePID(a,b)
+{
+   if(a.pid < b.pid)
+      return -1;
+   if(a.pid > b.pid)
+      return 1;
+   return 0;
 }
