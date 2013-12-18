@@ -206,6 +206,18 @@ function DeviceDriverFileSystem()
       }
    }
 
+   this.ls = function(){
+      var fileArray = [];
+      for(i = 0;i < this.numSectors;i++){
+         for(j = 0;j < this.numBlocks;j++){
+            var block = sessionStorage["0,"+i+","+j];
+            if(block[0] === "1")
+               fileArray.push(this.getData(block));
+         }
+      }
+      return fileArray;
+   }
+
    this.getData = function(block){
       return block.slice(this.dataOffset);
    }

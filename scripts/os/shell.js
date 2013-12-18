@@ -160,7 +160,7 @@ function shellInit() {
     //format
     sc = new ShellCommand();
     sc.command = "format";
-    sc.description = "clears hard drive.";
+    sc.description = "- clears hard drive.";
     sc.function = shellFormat;
     this.commandList[this.commandList.length] = sc;
 
@@ -190,6 +190,13 @@ function shellInit() {
     sc.command = "delete";
     sc.description = " <filename>- deletes <filename> from hard disk."
     sc.function = shellDelete;
+    this.commandList[this.commandList.length] = sc;
+
+    //ls
+    sc = new ShellCommand();
+    sc.command = "ls";
+    sc.description = "- lists files stored on disk.";
+    sc.function = shellLS;
     this.commandList[this.commandList.length] = sc;
 
     //
@@ -688,4 +695,13 @@ function shellDelete(args)
     }
     else
         _StdOut.putText("Please supply filename");
+}
+
+function shellLS(args)
+{
+    var files = krnFSDriver.ls();
+    for(i = 0; i < files.length;i++){
+        _StdOut.putText(files[i]);
+        _StdOut.advanceLine();
+    }
 }
