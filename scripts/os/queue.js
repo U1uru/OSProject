@@ -23,6 +23,8 @@ function Queue()
 
     this.enqueue = function(element) {
         this.q.push(element);        
+        if(_Scheduler.schedulingAlg === PRIORITY)
+            this.arrange();
     };
     
     this.dequeue = function() {
@@ -36,6 +38,13 @@ function Queue()
 
     this.peek = function(){
         return this.q[0];
+    }
+
+    this.arrange = function(){
+        if(_Scheduler.shedulingAlg === PRIORITY)
+            this.q.sort(function(a,b){return a.priority-b.priority});
+        else
+            this.q.sort(function(a,b){return a.pid-b.pid});
     }
     
     this.toString = function() {

@@ -199,6 +199,20 @@ function shellInit() {
     sc.function = shellLS;
     this.commandList[this.commandList.length] = sc;
 
+    //setSchedule
+    sc = new ShellCommand();
+    sc.command = "setschedule";
+    sc.description = " [rr,fcfs,priority]- sets scheduler with selected algorithm.";
+    sc.function = shellSetScheduler;
+    this.commandList[this.commandList.length] = sc;
+
+    //getSchedule
+    sc = new ShellCommand();
+    sc.command = "getschedule";
+    sc.description = "- returns the current scheduling algorithm.";
+    sc.function = shellGetScheduler;
+    this.commandList[this.commandList.length] = sc;
+
     //
     // Display the initial prompt.
     this.putPrompt();
@@ -548,6 +562,7 @@ function shellRunAll(args)
     var process;
     for(i = 0;i < _ProcessArray.length;i++){
         process = _ProcessArray[i];
+        process.state = "ready";
         _ReadyQueue.enqueue(process);
     }
     _CPU.clear();
@@ -704,4 +719,33 @@ function shellLS(args)
         _StdOut.putText(files[i]);
         _StdOut.advanceLine();
     }
+}
+
+function shellSetScheduler(args)
+{
+    if(args.length === 0)
+        _StdOut.putText("Please provide algorithm");
+    else{
+        if(args[0] === "rr")
+            _Scheduler.setAlgorithm(ROUND_ROBIN);//need to write this function
+        else if(args[0] === "fcfs")
+            _Scheduler.setAlgorithm(FC_FS);
+        else if(args[0] === "priority")
+            _Scheduler.setAlgorithm(PRIORITY);
+        else{
+            _StdOut.putText("Invalid Input");
+            return;
+        }
+        _StdOut.putText("Scheduler set");
+    }
+}
+
+function shellGetScheduler(args)
+{
+    if(_Scheduler.schedulingAlg === ROUND_ROBIN)
+        _StdOut.putText("Round Robin");
+    else if(_Scheduler.schedulingAlg === FC_FS)
+        _StdOut.putText("First-Come, First-Serve")
+    else
+        _StdOut.putText("Priority");
 }

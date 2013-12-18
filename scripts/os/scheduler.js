@@ -25,4 +25,9 @@ function scheduler()
       }
       _NumCycles = 0;
    }
+
+   this.setAlgorithm = function(schedule){
+      this.schedulingAlg = schedule;
+      _ReadyQueue.arrange()
+   }
 }

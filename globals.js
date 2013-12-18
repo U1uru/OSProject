@@ -28,7 +28,8 @@ var _MEMORY_PARTITION_SIZE = 256;
 
 //scheduling algorithms
 var ROUND_ROBIN = 0;
-
+var FC_FS = 1;
+var PRIORITY = 2;
 
 //
 // Global Variables
