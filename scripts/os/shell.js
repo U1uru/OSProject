@@ -185,6 +185,13 @@ function shellInit() {
     sc.function = shellWrite;
     this.commandList[this.commandList.length] = sc;
 
+    //delete <filename>
+    sc = new ShellCommand();
+    sc.command = "delete";
+    sc.description = " <filename>- deletes <filename> from hard disk."
+    sc.function = shellDelete;
+    this.commandList[this.commandList.length] = sc;
+
     //
     // Display the initial prompt.
     this.putPrompt();
@@ -664,4 +671,21 @@ function shellWrite(args)
         else
             _StdOut.putText(result);
     }
+}
+
+function shellDelete(args)
+{
+    if(args.length > 0)
+    {
+        var file = args[0];
+        for(i = 1;i < args.length;i++)
+            file += " " + args[i];
+        var result = krnFSDriver.delete(file);
+        if(result === true)
+            _StdOut.putText("File deleted");
+        else
+            _StdOut.putText(result);
+    }
+    else
+        _StdOut.putText("Please supply filename");
 }

@@ -48,7 +48,7 @@ function DeviceDriverFileSystem()
          for(j = 0; j < this.numSectors;j++){
             for(k = 0;k < this.numBlocks;k++){
                var block = sessionStorage["0,"+j+","+k];
-               if(this.getData(block) === fileName)return "File already exists";
+               if(block[0] == "1" && this.getData(block) === fileName)return "File already exists";
                if(block[0] === "0" && !set){
                   set = true;
                   dirT = 0;
@@ -94,7 +94,7 @@ function DeviceDriverFileSystem()
          for(i = 0;i < this.numSectors;i++){
             for(j = 0;j < this.numBlocks;j++){
                var block = sessionStorage["0,"+i+","+j];
-               if(this.getData(block) === fileName){
+               if(block[0] === "1" && this.getData(block) === fileName){
                   var addrs = block.slice(0,4);
                   do {
                      block = sessionStorage[addrs[1]+","+addrs[2]+","+addrs[3]];
@@ -125,7 +125,7 @@ function DeviceDriverFileSystem()
          for(i = 0;i < this.numSectors;i++){
             for(j = 0;j < this.numBlocks;j++){
                var block = sessionStorage["0,"+i+","+j];
-               if(this.getData(block) === fileName){
+               if(block[0] === "1" && this.getData(block) === fileName){
                   var dataAddress = block[1]+","+block[2]+","+block[3];
                   blocksFound++;
                   if(blocksFound === numBlocksNeeded){
@@ -173,6 +173,36 @@ function DeviceDriverFileSystem()
       {
          krnTrace(error);
          return "File write failed. See log for details.";
+      }
+   }
+
+   this.delete = function(fileName){
+      
+      try
+      {
+         for(i = 0;i < this.numSectors;i++){
+            for(j = 0;j < this.numBlocks;j++){
+               var block = sessionStorage["0,"+i+","+j];
+               if(block[0] === "1" && this.getData(block) === fileName){
+                  var addrs = block.slice(0,4);
+                  sessionStorage["0,"+i+","+j] = "0"+block.slice(1);
+                  do {
+                     block = sessionStorage[addrs[1]+","+addrs[2]+","+addrs[3]];
+                     sessionStorage[addrs[1]+","+addrs[2]+","+addrs[3]] = "0"+block.slice(1);
+                     addrs = block.slice(0,4);
+                  }
+                  while(addrs[0] === "2");
+                  return true;
+               }
+            }
+         }
+         return "Error: file not found";
+      }
+      catch(error)
+      {
+         krnTrace(error);
+         console.log(error);
+         return "File deletion failed. See log for details.";
       }
    }
 
