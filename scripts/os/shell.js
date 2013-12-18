@@ -153,8 +153,64 @@ function shellInit() {
     // kill <id>
     sc = new ShellCommand();
     sc.command = "kill";
-    sc.description = "- kills the specified process id.";
+    sc.description = " <PID>- kills the specified process id.";
     sc.function = shellKill;
+    this.commandList[this.commandList.length] = sc;
+
+    //format
+    sc = new ShellCommand();
+    sc.command = "format";
+    sc.description = "- clears hard drive.";
+    sc.function = shellFormat;
+    this.commandList[this.commandList.length] = sc;
+
+    //create <filename>
+    sc = new ShellCommand();
+    sc.command = "create";
+    sc.description = " <filename>- creates new file with <filename>.";
+    sc.function = shellCreate;
+    this.commandList[this.commandList.length] = sc;
+
+    //read <filename>
+    sc = new ShellCommand();
+    sc.command = "read";
+    sc.description = " <filename>- reads <filename> from disk.";
+    sc.function = shellRead;
+    this.commandList[this.commandList.length] = sc;
+
+    //write <filename> "data"
+    sc = new ShellCommand();
+    sc.command = "write";
+    sc.description = " <filename> \"data\"- writes \"data\" to <filename>.";
+    sc.function = shellWrite;
+    this.commandList[this.commandList.length] = sc;
+
+    //delete <filename>
+    sc = new ShellCommand();
+    sc.command = "delete";
+    sc.description = " <filename>- deletes <filename> from hard disk."
+    sc.function = shellDelete;
+    this.commandList[this.commandList.length] = sc;
+
+    //ls
+    sc = new ShellCommand();
+    sc.command = "ls";
+    sc.description = "- lists files stored on disk.";
+    sc.function = shellLS;
+    this.commandList[this.commandList.length] = sc;
+
+    //setSchedule
+    sc = new ShellCommand();
+    sc.command = "setschedule";
+    sc.description = " [rr,fcfs,priority]- sets scheduler with selected algorithm.";
+    sc.function = shellSetScheduler;
+    this.commandList[this.commandList.length] = sc;
+
+    //getSchedule
+    sc = new ShellCommand();
+    sc.command = "getschedule";
+    sc.description = "- returns the current scheduling algorithm.";
+    sc.function = shellGetScheduler;
     this.commandList[this.commandList.length] = sc;
 
     //
@@ -461,6 +517,8 @@ function shellStatus(args)
     if (args.length > 0)
     {
         _Status = args[0];
+        for(i = 1;i < args.length;i++)
+           _Status += " " + args[i];
     }
     else
     {
@@ -475,7 +533,10 @@ function shellBlueScreen(args)
 
 function shellLoad(args)
 {
-    var results = loadUserProgram();
+    var priority = 0;
+    if(args.length > 0)
+        priority = args[0];
+    var results = loadUserProgram(priority);
     if(results == -1)
         _StdOut.putText("Invalid hex code");
     else if(results == -2)
@@ -504,8 +565,10 @@ function shellRunAll(args)
     var process;
     for(i = 0;i < _ProcessArray.length;i++){
         process = _ProcessArray[i];
+        process.state = "ready";
         _ReadyQueue.enqueue(process);
     }
+    _ReadyQueue.arrange();
     _CPU.clear();
     _RunningProcess = _ReadyQueue.dequeue();
     _RunningProcess.state = "running";
@@ -559,4 +622,134 @@ function shellKill(args)
     }
     else
         _StdOut.putText("Please supply a valid target.");
+}
+
+function shellFormat(args)
+{
+    var success = krnFSDriver.format();
+    if(success)
+        _StdOut.putText("Hard disk drive formatted.");
+    else
+        _StdOut.putText("Error while formatting drive");
+}
+
+function shellCreate(args)
+{
+    if(args.length > 0)
+    {
+        var file = args[0]
+        for(i = 1;i < args.length;i++)
+            file += " "+args[i];
+        var result = krnFSDriver.create(file);
+        if(result === true)
+            _StdOut.putText("File "+file+" created.");
+        else
+        {
+            _StdOut.putText(result);
+        }
+    }
+    else
+        _StdOut.putText("Please supply a filename")
+}
+
+function shellRead(args)
+{
+    if(args.length > 0)
+    {
+        var file = args[0];
+        for(i = 1;i < args.length;i++)
+            file += " " + args[i];
+        var result = krnFSDriver.read(file);
+        _StdOut.putText(result);
+    }
+    else
+        _StdOut.putText("Please supply filename");
+}
+
+function shellWrite(args)
+{
+    if(args.length < 2)
+        _StdOut.putText("invalid input");
+    else{
+        var file = args[0];
+        var data;
+        var dataStart = false;
+        for(i = 1;i < args.length;i++){
+            if(!dataStart){
+                if(args[i][0] === "\""){
+                    dataStart = true;
+                    data = args[i].slice(1);
+                    if(data.slice(-1) === "\"")
+                       data = data.slice(0,-1);
+                    continue;
+                }
+                file += " "+args[i];
+            }
+            else{
+                data += " " + args[i];
+                if(data.slice(-1) === "\"")
+                    data = data.slice(0,-1);
+            }
+        }
+        var result = krnFSDriver.write(file,data);
+        if(result === true)
+            _StdOut.putText("write successful");
+        else
+            _StdOut.putText(result);
+    }
+}
+
+function shellDelete(args)
+{
+    if(args.length > 0)
+    {
+        var file = args[0];
+        for(i = 1;i < args.length;i++)
+            file += " " + args[i];
+        var result = krnFSDriver.delete(file);
+        if(result === true)
+            _StdOut.putText("File deleted");
+        else
+            _StdOut.putText(result);
+    }
+    else
+        _StdOut.putText("Please supply filename");
+}
+
+function shellLS(args)
+{
+    var files = krnFSDriver.ls();
+    for(i = 0; i < files.length;i++){
+        _StdOut.putText(files[i]);
+        _StdOut.advanceLine();
+    }
+}
+
+function shellSetScheduler(args)
+{
+    if(args.length === 0)
+        _StdOut.putText("Please provide algorithm");
+    else{
+        if(args[0] === "rr")
+            _Scheduler.setAlgorithm(ROUND_ROBIN);
+        else if(args[0] === "fcfs")
+            _Scheduler.setAlgorithm(FC_FS);
+        else if(args[0] === "priority")
+            _Scheduler.setAlgorithm(PRIORITY);
+        else{
+            _StdOut.putText("Invalid Input");
+            return;
+        }
+        _StdOut.putText("Scheduler set");
+    }
+}
+
+function shellGetScheduler(args)
+{
+    if(_Schedule === ROUND_ROBIN)
+        _StdOut.putText("Round Robin");
+    else if(_Schedule === FC_FS)
+        _StdOut.putText("First-Come, First-Serve")
+    else
+        _StdOut.putText("Priority");
 }

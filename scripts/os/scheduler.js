@@ -6,7 +6,6 @@
 
 function scheduler()
 {
-   this.schedulingAlg = ROUND_ROBIN;
 
    this.contextSwitch = function(){
       if(_ReadyQueue.getSize() > 0){
@@ -24,5 +23,10 @@ function scheduler()
          _CPU.switch(_RunningProcess);
       }
       _NumCycles = 0;
+   }
+
+   this.setAlgorithm = function(schedule){
+      _Schedule = schedule;
+      _ReadyQueue.arrange()
    }
 }

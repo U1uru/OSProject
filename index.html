@@ -23,6 +23,7 @@
    <script type="text/javascript" src="scripts/os/scheduler.js"></script>	
    <script type="text/javascript" src="scripts/os/deviceDriver.js"></script>
    <script type="text/javascript" src="scripts/os/deviceDriverKeyboard.js"></script>
+   <script type="text/javascript" src="scripts/os/deviceDriverFileSystem.js"></script>
    <script type="text/javascript" src="scripts/os/loader.js"></script>
    <script type="text/javascript" src="scripts/os/memManager.js"></script>
    <script type="text/javascript" src="scripts/os/pcb.js"></script>
@@ -109,12 +110,14 @@
    
    <div id = "divPCBs" style = "margin-right:4px;">
       <label>
-         PCB's
+         <br>
+         Ready Queue
          <br>
          <textarea name = "PCBs"
          		   id = "PCBs"
                    rows = "8"
                    cols = "48"
+                   readonly
          ></textarea>
       </label>
    </div>
@@ -140,6 +143,19 @@
                    id  ="cpuOutput"
                    rows="8"
                    cols="24"
+                   readonly
+         ></textarea>
+      </label>
+   </div>
+   
+   <div id="storageDisplay" style="float:left;">
+      <label>
+         Disk Storage
+         <br>
+         <textarea name="storageOutput"
+                   id  ="storageOutput"
+                   rows="8"
+                   cols="72"
                    readonly
          ></textarea>
       </label>

@@ -28,7 +28,8 @@ var _MEMORY_PARTITION_SIZE = 256;
 
 //scheduling algorithms
 var ROUND_ROBIN = 0;
-
+var FC_FS = 1;
+var PRIORITY = 2;
 
 //
 // Global Variables
@@ -48,6 +49,8 @@ var _ReadyQueue = null;
 var _RunningProcess = null;
 
 var _Scheduler = null;
+
+var _Schedule = ROUND_ROBIN;
 
 var _Quantum = 6;
 
@@ -93,6 +96,6 @@ var _SarcasticMode = false;
 
 // Global Device Driver Objects - page 12
 var krnKeyboardDriver = null;
-
+var krnFSDriver = null;
 // For testing...
 var _GLaDOS = null;

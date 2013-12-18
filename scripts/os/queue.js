@@ -23,6 +23,8 @@ function Queue()
 
     this.enqueue = function(element) {
         this.q.push(element);        
+        if(_Schedule === PRIORITY)
+            this.arrange();
     };
     
     this.dequeue = function() {
@@ -33,6 +35,19 @@ function Queue()
         }
         return retVal;        
     };
+
+    this.peek = function(){
+        return this.q[0];
+    }
+
+    this.arrange = function(){
+        if(_Schedule === PRIORITY){
+            this.q.sort(comparePriority);
+        }
+        else{
+            this.q.sort(comparePID);
+        }
+    }
     
     this.toString = function() {
         var retVal = "";
@@ -42,4 +57,22 @@ function Queue()
         }
         return retVal;
     };
+}
+
+function comparePriority(a,b)
+{
+   if(a.priority < b.priority)
+      return -1;
+   if(a.priority > b.priority)
+      return 1;
+   return 0;
+}
+
+function comparePID(a,b)
+{
+   if(a.pid < b.pid)
+      return -1;
+   if(a.pid > b.pid)
+      return 1;
+   return 0;
 }
