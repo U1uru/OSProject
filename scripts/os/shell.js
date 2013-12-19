@@ -562,10 +562,14 @@ function shellRun(args)
 
 function shellRunAll(args)
 {
+    _ReadyQueue = new Queue(); //reinitialize ready queue
     var process;
     for(i = 0;i < _ProcessArray.length;i++){
         process = _ProcessArray[i];
-        process.state = "ready";
+        if(process.slot >= 0)
+            process.state = "ready";
+        else
+            process.state = "on disk";
         _ReadyQueue.enqueue(process);
     }
     _ReadyQueue.arrange();
@@ -598,7 +602,6 @@ function shellProcesses(args)
 
 function shellKill(args)
 {
-    console.log("here i am!");
     var ID = parseInt(args[0]);
     if(args.length > 0 && _ProcessArray[parseInt(args[0])] != null){
         if(_ProcessArray[ID].state === "ready"){

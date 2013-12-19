@@ -98,4 +98,41 @@ function memManager()
       for(i = 512; i < 768;i++)
          _Memory[i] = "00";
    }
+
+   this.getMemoryData = function(base, limit){
+      var data = _Memory[base];
+      for(i = base+1;i <= limit;i++)
+         data += " "+_Memory[i];
+      return data;
+   }
+
+   this.rollOut = function(process){
+      var fileName = "¡"+ process.pid;
+      var data = this.getMemoryData(process.base,process.limit);
+      krnFSDriver.create(fileName);
+      krnFSDriver.write(fileName,data);
+      
+      if(process.slot === 0)this.clear0();
+      else if(process.slot === 1)this.clear1();
+      else if(process.slot === 2)this.clear2();
+
+      process.base = process.limit = process.slot = -1;
+      process.state = "on disk";
+   }
+
+   this.rollIn = function(process){
+      var fileName = "¡"+process.pid;
+      var data = krnFSDriver.read(fileName);
+      krnFSDriver.delete(fileName);
+      
+      process.slot = this.getNextSect();
+      process.base = process.slot*256;
+      process.limit = process.slot*256+255;
+
+      var programArray = data.split(/\s/);
+      for(i = 0; i < programArray.length; i++){
+         _Memory[i+process.base] = programArray[i].toUpperCase();
+      }
+      process.state = "ready";
+   }
 }

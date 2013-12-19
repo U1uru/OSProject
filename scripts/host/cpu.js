@@ -171,15 +171,11 @@ function breakSysCall()
     if(_ReadyQueue.isEmpty()){
         _CPU.isExecuting = false;
         _RunningProcess = null;
+        _NumCycles = 0;
     }
     else{
-        _CPU.clear();
-        _RunningProcess = _ReadyQueue.dequeue();
-        _RunningProcess.state = "running";
-        _CPU.switch(_RunningProcess);
+        _Scheduler.contextSwitch();
     }
-    _NumCycles = 0;
-
 }
 
 function compareMemToX()

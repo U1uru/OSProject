@@ -14,7 +14,14 @@ function loadUserProgram(priority)
 
    //check memory manager for available memory
    if(!_MemManager.isMemAvailable()){
-      return -1;
+      var process = createProcess(priority);
+      var fileName = "¡"+process.pid;
+      var data = input;
+      krnFSDriver.create(fileName);
+      krnFSDriver.write(fileName,data);
+      process.state = "on disk";
+      _ProcessArray[process.pid] = process;
+      return process.pid;
    }
    var process = createProcess(priority);
    //separate opcodes into array and enter into mem
@@ -44,10 +51,14 @@ function createProcess(priority)
       base = nextSect*256;
       limit = nextSect*256+255;
    }
+   else{
+      base = nextSect; // (nextSect is -1)
+      limit = nextSect;
+   }
 
    var pid = _PID++;
 
-   var newProcess = new pcb(pid, state, pc, base, limit, priority);
+   var newProcess = new pcb(pid, state, pc, nextSect, base, limit, priority);
 
    return newProcess;
 }
