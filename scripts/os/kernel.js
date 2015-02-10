@@ -53,7 +53,7 @@ function krnBootstrap()      // Page 8.
 
    // Finally, initiate testing.
    if (_GLaDOS) {
-      _GLaDOS.afterStartup();
+      //_GLaDOS.afterStartup();
    }
 }
 
